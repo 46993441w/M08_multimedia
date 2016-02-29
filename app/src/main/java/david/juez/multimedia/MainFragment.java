@@ -14,11 +14,11 @@ import com.firebase.ui.FirebaseListAdapter;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainFragment extends Fragment {
     FirebaseListAdapter mAdapter;
     ListView notaList;
 
-    public MainActivityFragment() {
+    public MainFragment() {
     }
 
     @Override
@@ -30,9 +30,9 @@ public class MainActivityFragment extends Fragment {
         Firebase.setAndroidContext(getContext());
         Firebase ref = new Firebase("https://uf2multimediadavid.firebaseio.com/");
 
-        Firebase users = ref.child("notes");
+        Firebase notes = ref.child("notes");
 
-        mAdapter = new FirebaseListAdapter<Nota>(getActivity(), Nota.class, android.R.layout.two_line_list_item, users) {
+        mAdapter = new FirebaseListAdapter<Nota>(getActivity(), Nota.class, android.R.layout.two_line_list_item, notes) {
             @Override
             protected void populateView(View view, Nota nota, int position) {
                 ((TextView)view.findViewById(android.R.id.text1)).setText(nota.getTitle());

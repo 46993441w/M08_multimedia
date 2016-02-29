@@ -6,13 +6,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.firebase.client.Firebase;
@@ -22,7 +20,7 @@ public class NotaFragment extends Fragment {
 
     private EditText etTitle;
     private EditText etDescription;
-    private Firebase users;
+    private Firebase notas;
 
     public NotaFragment() {
 
@@ -44,7 +42,7 @@ public class NotaFragment extends Fragment {
         Firebase.setAndroidContext(getContext());
         Firebase ref = new Firebase("https://uf2multimediadavid.firebaseio.com/");
 
-        users = ref.child("notes");
+        notas = ref.child("notes");
 
         etTitle = (EditText) view.findViewById(R.id.etTitle);
         etDescription = (EditText) view.findViewById(R.id.etDescription);
@@ -72,7 +70,7 @@ public class NotaFragment extends Fragment {
             nota.setMessage(etDescription.getText().toString());
             nota.setLat(location.getLatitude());
             nota.setLon(location.getLongitude());
-            Firebase newNota = users.push();
+            Firebase newNota = notas.push();
             newNota.setValue(nota);
             getActivity().finish();
         } else if(etTitle.getText().equals("")){
