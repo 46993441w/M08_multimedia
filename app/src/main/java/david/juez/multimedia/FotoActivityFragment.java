@@ -5,9 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
@@ -28,6 +31,7 @@ public class FotoActivityFragment extends Fragment {
     private Button bt_hacerfoto;
     private Firebase fotos;
     private String fotopath;
+    private String fotoname;
 
     public FotoActivityFragment() {
     }
@@ -56,9 +60,9 @@ public class FotoActivityFragment extends Fragment {
                 imagesFolder.mkdirs();
                 //añadimos el nombre de la imagen
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "IMG_" + timeStamp + ".jpg";
+                fotoname = "IMG_" + timeStamp + ".jpg";
 
-                File image = new File( imagesFolder, imageFileName );
+                File image = new File(imagesFolder, fotoname);
                 fotopath = image.getAbsolutePath();
                 Uri uriSavedImage = Uri.fromFile(image);
                 //Le decimos al Intent que queremos grabar la imagen
@@ -71,15 +75,25 @@ public class FotoActivityFragment extends Fragment {
     }
 
 
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //Comprovamos que la foto se a realizado
-        if (requestCode == 1 && resultCode == getActivity().RESULT_OK ) {
+        if (requestCode == 1 && resultCode == getActivity().RESULT_OK) {
             LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
             Foto foto = new Foto();
             foto.setRuta(fotopath);
+            foto.setName(fotoname);
             foto.setLat(location.getLatitude());
             foto.setLon(location.getLongitude());
             Firebase newNota = fotos.push();

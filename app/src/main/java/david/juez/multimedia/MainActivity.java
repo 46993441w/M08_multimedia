@@ -64,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void setupViewPager(PersonalViewPager upViewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new MainFragment(), "Notas");
+        adapter.addFragment(new NotaFragment(), "Notas");
         adapter.addFragment(new FotoFragment(), "Fotos");
+        adapter.addFragment(new MapaFragment(), "Mapa");
         viewPager.setAdapter(adapter);
         viewPager.setPagingEnabled(false);
     }

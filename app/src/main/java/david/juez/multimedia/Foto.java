@@ -2,6 +2,7 @@ package david.juez.multimedia;
 
 public class Foto {
     String ruta;
+    String name;
     Double lat;
     Double lon;
 
@@ -15,6 +16,14 @@ public class Foto {
 
     public void setRuta(String message) {
         this.ruta = message;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Double getLat() {

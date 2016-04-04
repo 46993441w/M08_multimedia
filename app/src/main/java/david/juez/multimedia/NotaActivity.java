@@ -10,7 +10,7 @@ import android.view.View;
 public class NotaActivity extends AppCompatActivity {
 
     FragmentManager fm;
-    NotaFragment fragment;
+    NotaActivityFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +20,7 @@ public class NotaActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         fm = getSupportFragmentManager();
-        fragment = (NotaFragment) fm.findFragmentById(R.id.listFragment);
+        fragment = (NotaActivityFragment) fm.findFragmentById(R.id.listFragment);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.plus);
         fab.setOnClickListener(new View.OnClickListener() {
