@@ -1,6 +1,7 @@
 package david.juez.multimedia;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -23,6 +24,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.firebase.client.Firebase;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -90,15 +96,40 @@ public class FotoActivityFragment extends Fragment {
                 // for ActivityCompat#requestPermissions for more details.
                 return;
             }
-            Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-            Foto foto = new Foto();
-            foto.setRuta(fotopath);
-            foto.setName(fotoname);
-            foto.setLat(location.getLatitude());
-            foto.setLon(location.getLongitude());
-            Firebase newNota = fotos.push();
-            newNota.setValue(foto);
-            getActivity().finish();
+            final Location location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+
+            AsyncHttpClient client = new AsyncHttpClient();
+            //New File
+            File file = new File(fotopath);
+            RequestParams params = new RequestParams();
+            try {
+                //"photos" is Name of the field to identify file on server
+                params.put("fotoUp", file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            client.post(getContext(), "http://fotosapp.16mb.com/upload.php", params, new AsyncHttpResponseHandler() {
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    System.out.print("Failed..");
+                    getActivity().finish();
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    System.out.print("Success..");
+                    String ruta = new String(responseBody);
+                    Foto foto = new Foto();
+                    foto.setRuta(ruta);
+                    foto.setName(fotoname);
+                    foto.setLat(location.getLatitude());
+                    foto.setLon(location.getLongitude());
+                    Firebase newNota = fotos.push();
+                    newNota.setValue(foto);
+                    getActivity().finish();
+                }
+            });
         }
     }
 }

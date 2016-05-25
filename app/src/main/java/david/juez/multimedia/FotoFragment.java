@@ -2,7 +2,6 @@ package david.juez.multimedia;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +13,11 @@ import android.widget.TextView;
 
 import com.firebase.client.Firebase;
 import com.firebase.ui.FirebaseListAdapter;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -39,12 +43,24 @@ public class FotoFragment extends Fragment {
         mAdapter = new FirebaseListAdapter<Foto>(getActivity(), Foto.class, R.layout.foto_row, fotos) {
             @Override
             protected void populateView(View view, Foto foto, int position) {
-                ((TextView)view.findViewById(R.id.tvRuta)).setText(foto.getRuta());
+                ((TextView)view.findViewById(R.id.tvRuta)).setText(foto.getName());
                 //Creamos un bitmap con la imagen recientemente
                 //almacenada en la memoria
-                Bitmap bMap = BitmapFactory.decodeFile(foto.getRuta());
-                //Añadimos el bitmap al imageView para mostrarlo por pantalla
-                ((ImageView)view.findViewById(R.id.iFoto)).setImageBitmap(bMap);
+                try {
+                    java.net.URL url = new java.net.URL(foto.getRuta());
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream input = connection.getInputStream();
+                    Bitmap bMap = BitmapFactory.decodeStream(input);
+
+                    //Añadimos el bitmap al imageView para mostrarlo por pantalla
+                    ((ImageView)view.findViewById(R.id.iFoto)).setImageBitmap(bMap);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         };
         fotoList.setAdapter(mAdapter);
